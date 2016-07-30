@@ -1,0 +1,65 @@
+<h1>Uploading files to a server</h1>
+<p>Client-side example</p>
+
+<form id="fileForm">
+  <input id="fInput" type="file" name="fileIwantedToUpload"/>
+  <input type="submit">
+</form>
+
+<script type="text/javascript">
+  // get reference to fileForm node
+  var fileForm = $("#fileForm");
+  
+  // send file data using AJAX
+  function sendFileWhenDone(fileData) {
+    // you can access the file data from the file reader's event object as:
+    
+    console.log("File data we sent: ", fileData);
+    
+    // Send AJAX request with form data
+    $.ajax({
+      type: "POST",
+      // specify the url we want to upload our file to
+      url: '/url/to/upload/to',
+      // this is how we pass in the actual file data from the form
+      data: fileData,
+      processData: false,
+      contentType: false,
+      success: function(JSONsentFromServer) {
+        // what do you do went it goes through
+        if (JSONsentFromServer.success) {
+          console.log("[Message]", JSONsentFromServer.message);
+        }
+      },
+      error: function(errorSentFromServer) {
+        // what to do if error
+        console.log("[Error]", errorSentFromServer);
+      }
+    })
+    
+  }
+  
+  // Add event handlers for submission
+  fileForm.on('submit', function(evt) {
+    // stop page from refreshing on submit
+    evt.preventDefault();
+    
+    var fileFormElement = fileForm[0];
+    
+    // get a reference to the fileInput
+    var fileInput = $("#fInput");
+    console.log("fileInput", fileInput);
+    
+    // so that you can get the file you wanted to upload 
+    var file = fileInput[0].files[0];
+    
+    // create the container for our file data
+    var fd = new FormData();
+    
+    // encode the file
+    fd.append('fileName', file);
+    
+    sendFileWhenDone(fd);
+    
+  })
+</script>
