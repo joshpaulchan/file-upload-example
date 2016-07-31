@@ -11,12 +11,8 @@ var multerS3 = require('multer-s3');
 var options = {
   accessKeyId: process.env.S3_ACCESS_KEY,
   secretAccessKey: process.env.S3_SECRET_KEY,
-  logger: console
-  // region: "oregon",
-  // NEEDED for Buckets in Frankfurt (and change region)
-  // signatureVersion: 'v4',
-  // s3DisableBodySigning: true
-  // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Config.html#constructor-property 
+  // Log output
+  // logger: console
 };
 
 // create s3 client
@@ -27,8 +23,10 @@ var upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: 'joshmagic',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    acl: 'public-read',
     key: function (req, file, cb) {
-      cb(null, Date.now().toString())
+      cb(null, Date.now().toString() + "_" + file.originalname )
     }
   })
 });
@@ -56,11 +54,11 @@ router.post('/url/to/upload/to', upload.single('fileName'), function(req, res, n
   console.log("Files that were uploaded: ", req.file);
   
   // Path of the file that was sent to server
-  console.log("Relative path of the new file: ", req.file.path);
+  console.log("Url of the new file: ", req.file.location);
   
   res.status(200).json({
     success: true,
-    message: "Upload OK"
+    message: req.file.location
   });
   
 });
