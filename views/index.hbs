@@ -1,6 +1,9 @@
 <h1>Uploading files to a server</h1>
 <p>Client-side example</p>
 
+<div class="images">
+</div>
+
 <form id="fileForm">
   <input id="fInput" type="file" name="fileIwantedToUpload"/>
   <input type="submit">
@@ -9,6 +12,11 @@
 <script type="text/javascript">
   // get reference to fileForm node
   var fileForm = $("#fileForm");
+  
+  function mountImage(url) {
+    var images = $(".images");
+    images.append($("<img/>").attr('src', url))
+  }
   
   // send file data using AJAX
   function sendFileWhenDone(fileData) {
@@ -29,6 +37,7 @@
         // what do you do went it goes through
         if (JSONsentFromServer.success) {
           console.log("[Message]", JSONsentFromServer.message);
+          mountImage(JSONsentFromServer.message);
         }
       },
       error: function(errorSentFromServer) {
